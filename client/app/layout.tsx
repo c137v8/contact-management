@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ibrahim",
+  title: "Ibrahim | MERN Stack",
   description: "MERN stack project",
 };
 
