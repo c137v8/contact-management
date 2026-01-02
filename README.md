@@ -127,7 +127,6 @@ const API_URL = "http://localhost:5000/api/contacts";
 
 - MongoDB Atlas IP access is set to `0.0.0.0/0` to support Render deployment.
 - The project prioritizes working functionality and clarity over over-engineering.
-- Designed to be completed within a 60-minute interview time limit.
 
 ---
 
