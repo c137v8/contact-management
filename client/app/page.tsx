@@ -10,7 +10,7 @@ type Contact = {
   message?: string;
 };
 
-const API_URL = "http://localhost:5000/api/contacts";
+const API_URL = "https://contact-management-iehc.onrender.com/api/contacts";
 const emailRegex = /^\S+@\S+\.\S+$/;
 
 export default function Home() {
