@@ -1,0 +1,56 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #f5f6fa;
+}
+
+.container {
+  max-width: 800px;
+  margin: 40px auto;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 8px 14px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+}
+
+.success {
+  color: green;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+button.danger {
+  background: #e74c3c;
+  color: white;
+  border: none;
+}
