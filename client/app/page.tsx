@@ -10,18 +10,22 @@ type Contact = {
   message?: string;
 };
 
-const API_URL = "https://contact-management-iehc.onrender.com/api/contacts";
+const API_URL =
+  "https://contact-management-iehc.onrender.com/api/contacts";
 const emailRegex = /^\S+@\S+\.\S+$/;
 
 export default function Home() {
   const [contacts, setContacts] = useState<Contact[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
     message: ""
   });
-  const [success, setSuccess] = useState(false);
 
   const isValid =
     form.name.trim() &&
@@ -29,9 +33,16 @@ export default function Home() {
     (!form.email || emailRegex.test(form.email));
 
   const fetchContacts = async () => {
-    const res = await fetch(API_URL);
-    const data = await res.json();
-    setContacts(data);
+    try {
+      setLoading(true);
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      setContacts(data);
+    } catch (err) {
+      console.error("Failed to load contacts");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -48,6 +59,8 @@ export default function Home() {
     e.preventDefault();
     if (!isValid) return;
 
+    setSubmitting(true);
+
     await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -55,66 +68,84 @@ export default function Home() {
     });
 
     setForm({ name: "", email: "", phone: "", message: "" });
-    setSuccess(true);
-    fetchContacts();
-    setTimeout(() => setSuccess(false), 2000);
+    await fetchContacts();
+    setSubmitting(false);
   };
 
   const deleteContact = async (id: string) => {
+    setDeletingId(id);
     await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-    fetchContacts();
+    await fetchContacts();
+    setDeletingId(null);
   };
 
   return (
     <main className="container">
-      <h1>Contact Manager - Made by Ibrahim</h1>
+      <header className="header">
+        <h1>Contact Manager</h1>
+        <p className="subtitle">
+          MERN contact management app
+        </p>
+      </header>
 
-      {/* Contact Form */}
-      <form className="card" onSubmit={handleSubmit}>
+      {/* FORM */}
+      <section className="card">
         <h3>Add Contact</h3>
 
-        <input
-          name="name"
-          placeholder="Name *"
-          value={form.name}
-          onChange={handleChange}
-        />
+        <form onSubmit={handleSubmit} className="form">
+          <div className="grid">
+            <input
+              name="name"
+              placeholder="Name *"
+              value={form.name}
+              onChange={handleChange}
+            />
+            <input
+              name="phone"
+              placeholder="Phone *"
+              value={form.phone}
+              onChange={handleChange}
+            />
+          </div>
 
-        <input
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-        />
-        {form.email && !emailRegex.test(form.email) && (
-          <p className="error">Invalid email</p>
-        )}
+          <input
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+          />
+          {form.email && !emailRegex.test(form.email) && (
+            <p className="error">Invalid email format</p>
+          )}
 
-        <input
-          name="phone"
-          placeholder="Phone *"
-          value={form.phone}
-          onChange={handleChange}
-        />
+          <textarea
+            name="message"
+            placeholder="Message (optional)"
+            value={form.message}
+            onChange={handleChange}
+          />
 
-        <textarea
-          name="message"
-          placeholder="Message (optional)"
-          value={form.message}
-          onChange={handleChange}
-        />
+          <button disabled={!isValid || submitting}>
+            {submitting ? "Saving..." : "Save Contact"}
+          </button>
+        </form>
+      </section>
 
-        <button disabled={!isValid}>Submit</button>
-        {success && <p className="success">Contact saved</p>}
-      </form>
-
-      {/* Contact List */}
-      <div className="card">
+      {/* LIST */}
+      <section className="card">
         <h3>Saved Contacts</h3>
 
-        {!contacts.length && <p>No contacts yet.</p>}
+        {loading && (
+          <p className="loading">
+            Loading contacts (Render may take ~30s)...
+          </p>
+        )}
 
-        {!!contacts.length && (
+        {!loading && !contacts.length && (
+          <p className="empty">No contacts yet</p>
+        )}
+
+        {!loading && contacts.length > 0 && (
           <table>
             <thead>
               <tr>
@@ -133,9 +164,10 @@ export default function Home() {
                   <td>
                     <button
                       className="danger"
+                      disabled={deletingId === c._id}
                       onClick={() => deleteContact(c._id)}
                     >
-                      Delete
+                      {deletingId === c._id ? "Deleting..." : "Delete"}
                     </button>
                   </td>
                 </tr>
@@ -143,7 +175,7 @@ export default function Home() {
             </tbody>
           </table>
         )}
-      </div>
+      </section>
     </main>
   );
 }

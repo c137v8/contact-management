@@ -54,3 +54,12 @@ button.danger {
   color: white;
   border: none;
 }
+.loading {
+  color: #2563eb;
+  font-size: 14px;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
