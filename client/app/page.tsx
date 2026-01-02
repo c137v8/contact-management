@@ -11,7 +11,7 @@ type Contact = {
 };
 
 const API_URL =
-  "https://contact-management-iehc.onrender.com/api/contacts";
+  "https://contact-management-z1h4.vercel.app/api/contacts";
 const emailRegex = /^\S+@\S+\.\S+$/;
 
 export default function Home() {
